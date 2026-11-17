@@ -1,0 +1,34 @@
+# Game files copied by tools/copy_game_files.py (Valve content: never commit)
+assets/*
+!assets/README.txt
+
+# Demo files (local only; the folder is kept via its README)
+demos/*
+!demos/README.txt
+
+# Browser test output (Playwright screenshots, snapshots, console logs)
+.playwright-mcp/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Secrets / local config (never commit)
+.env
+.env.*
+*.pem
+*.key
+.claude/settings.local.json
+
+# Node / tooling (if ever added)
+node_modules/
+*.log
+
+# Editors and OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db

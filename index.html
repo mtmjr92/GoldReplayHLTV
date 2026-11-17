@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GoldReplayHLTV</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27%3E%3Ccircle cx=%2712%27 cy=%2712%27 r=%279%27 fill=%27none%27 stroke=%27%23f2a33a%27 stroke-width=%272.5%27/%3E%3Cpath d=%27M12 2v6M12 16v6M2 12h6M16 12h6%27 stroke=%27%23f2a33a%27 stroke-width=%272.5%27/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css?v=52">
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="topbar">
+      <div class="brand">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3v5M12 16v5M3 12h5M16 12h5" stroke="currentColor" stroke-width="2"/></svg>
+        <span>GoldReplayHLTV</span>
+      </div>
+      <div class="match-info" id="matchInfo" data-i18n="noDemo">Nenhuma demo carregada</div>
+      <label class="lang">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+        <span class="sr-only" data-i18n="language">Idioma</span>
+        <select id="langSelect" data-i18n-aria="language"></select>
+      </label>
+      <label class="btn btn-primary">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16M12 4v11M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span data-i18n="openDemo">Abrir demo</span>
+        <input type="file" id="fileInput" accept=".dem" hidden>
+      </label>
+    </header>
+
+    <main class="stage">
+      <div class="view-col">
+        <div class="viewbar">
+        <div class="radar-tools" id="radarTools" hidden>
+          <div class="seg" role="group">
+            <button class="tool" id="btnView2d" aria-pressed="true" data-i18n-title="tip2d">2D</button>
+            <button class="tool" id="btnView3d" aria-pressed="false" data-i18n-title="tip3d">3D</button>
+          </div>
+          <div class="seg cam3d" role="group" hidden>
+            <button class="tool" data-cam="first" data-i18n="cam1" data-i18n-title="tipCam1">1ª pessoa</button>
+            <button class="tool" data-cam="third" data-i18n="cam3" data-i18n-title="tipCam3">3ª pessoa</button>
+            <button class="tool" data-cam="free" data-i18n="camFree" data-i18n-title="tipFree">Livre</button>
+          </div>
+          <!-- 2D radar tools: same spot as the 3D cameras -->
+          <div class="seg radar2d-tools" role="group">
+            <button class="tool" id="btnFit" data-i18n="fit" data-i18n-title="tipFit">Enquadrar</button>
+            <button class="tool" id="btnFollow" aria-pressed="false" data-i18n="follow" data-i18n-title="tipFollow">Seguir</button>
+          </div>
+          <!-- screen mode: Normal | game HUD | Clean (H key cycles) -->
+          <div class="seg clean-seg" role="radiogroup" id="cleanSeg" data-i18n-title="tipClean">
+            <button class="tool" data-clean="off" role="radio" data-i18n="cleanNormal" data-i18n-title="tipCleanOff">Normal</button>
+            <button class="tool" data-clean="hud" role="radio" data-i18n="cleanHudShort" data-i18n-title="omCleanKeepHud">HUD</button>
+            <button class="tool" data-clean="all" role="radio" data-i18n="cleanAllBtn" data-i18n-title="cleanAllTip">Limpa</button>
+          </div>
+          <button class="tool tool-help" id="btnHelp" data-i18n-title="tipHelp" aria-haspopup="dialog">?</button>
+          <div class="opts-wrap">
+            <button class="tool" id="btnOpts" aria-expanded="false" aria-controls="optsMenu" data-i18n-title="tipOptions">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="16" cy="6" r="2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="10" cy="12" r="2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="18" r="2" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+              <span data-i18n="options">Opções</span>
+            </button>
+            <div class="opts-menu" id="optsMenu" hidden>
+              <p class="om-note om-clean-note" data-i18n="omCleanNote"></p>
+              <div class="om-tabs" role="tablist">
+                <button role="tab" data-omtab="visual" aria-selected="true" data-i18n="omTabVisual">Visual</button>
+                <button role="tab" data-omtab="study" aria-selected="false" data-i18n="omTabStudy">Estudo</button>
+                <button role="tab" data-omtab="colors" aria-selected="false" data-i18n="omTabColors">Cores</button>
+              </div>
+              <div class="om-group" data-ompanel="study">
+                <div class="om-title"><span data-i18n="omXray">Raio-X (através das paredes)</span> <span class="om-tag">3D</span></div>
+                <label><input type="checkbox" data-opt="xrayPlayers"> <span data-i18n="omPlayers">Jogadores</span></label>
+                <label><input type="checkbox" data-opt="xrayWeapons"> <span data-i18n="omWeapons">Armas no chão</span></label>
+                <label><input type="checkbox" data-opt="xrayBomb"> <span data-i18n="omBomb">Bomba (C4)</span></label>
+                <label><input type="checkbox" data-opt="xrayGrenades"> <span data-i18n="omGrenades">Granadas</span></label>
+              </div>
+              <div class="om-group" data-ompanel="study">
+                <div class="om-title"><span data-i18n="omStudy">Estudo</span> <span class="om-tag">3D</span></div>
+                <label><input type="checkbox" data-opt="tracers"> <span data-i18n="omTracers">Linhas de tiro</span></label>
+                <p class="om-note" data-i18n="omTracersNote"></p>
+              </div>
+              <div class="om-group" data-ompanel="visual">
+                <div class="om-title" data-i18n="omScreen">Na tela</div>
+                <label><input type="checkbox" data-opt="scoreboard"> <span data-i18n="omScoreboard">Placar principal</span></label>
+                <label><input type="checkbox" data-opt="names"> <span data-i18n="names">Nomes</span></label>
+                <label><input type="checkbox" data-opt="hud"> <span data-i18n="omHud">HUD do jogador (1ª pessoa)</span></label>
+                <label><input type="checkbox" data-opt="killfeed"> <span data-i18n="omKillfeed">Quadro de abates</span></label>
+                <label><input type="checkbox" data-opt="crosshair"> <span data-i18n="omCrosshair">Mira</span></label>
+                <label><input type="checkbox" data-opt="viewmodel"> <span data-i18n="omViewmodel">Arma na mão (1ª pessoa)</span></label>
+                <label><input type="checkbox" data-opt="specbar"> <span data-i18n="omSpecbar">Quem está na câmera</span></label>
+              </div>
+              <div class="om-group" data-ompanel="colors">
+                <div class="om-title" data-i18n="omColors">Cores</div>
+                <label class="om-color"><span data-i18n="omHudColor">HUD do jogador</span>
+                  <select data-color="hud">
+                    <option value="#ffa000" data-i18n="cOrange">Laranja (padrão)</option>
+                    <option value="#00ff00" data-i18n="cGreen">Verde</option>
+                    <option value="#00c8ff" data-i18n="cBlue">Azul</option>
+                    <option value="#ff3030" data-i18n="cRed">Vermelho</option>
+                    <option value="#ffffff" data-i18n="cWhite">Branco</option>
+                    <option value="custom" data-i18n="cCustom">Outra…</option>
+                  </select>
+                  <input type="color" data-color-pick="hud" value="#ffa000" hidden>
+                </label>
+                <label class="om-color"><span data-i18n="omXhairColor">Mira</span>
+                  <select data-color="crosshair">
+                    <option value="#50ff50" data-i18n="cGreen">Verde</option>
+                    <option value="#ff3030" data-i18n="cRed">Vermelho</option>
+                    <option value="#00c8ff" data-i18n="cBlue">Azul</option>
+                    <option value="#ffff00" data-i18n="cYellow">Amarelo</option>
+                    <option value="#ffffff" data-i18n="cWhite">Branco</option>
+                    <option value="custom" data-i18n="cCustom">Outra…</option>
+                  </select>
+                  <input type="color" data-color-pick="crosshair" value="#50ff50" hidden>
+                </label>
+              </div>
+              <p class="om-note" data-i18n="omNote"></p>
+            </div>
+          </div>
+        </div>
+        </div>
+      <section class="radar-wrap" id="radarWrap">
+        <canvas id="radar" aria-label="Radar"></canvas>
+
+        <div class="hud" id="hud" hidden>
+          <div class="hud-score">
+            <span class="hud-team t" id="hudTName">T</span>
+            <span class="hud-num t" id="hudTScore">0</span>
+            <span class="hud-clock" id="hudClock">0:00</span>
+            <span class="hud-num ct" id="hudCTScore">0</span>
+            <span class="hud-team ct" id="hudCTName">CT</span>
+          </div>
+          <div class="hud-sub" id="hudSub"></div>
+        </div>
+
+        <!-- 2D radar legend -->
+        <details class="radar-legend" id="radarLegend" hidden>
+          <summary data-i18n="legend">Legenda</summary>
+          <ul>
+            <li><i class="lg-dot t"></i><span data-i18n="lgT">Terrorista</span></li>
+            <li><i class="lg-dot ct"></i><span data-i18n="lgCT">Contra-terrorista</span></li>
+            <li><i class="lg-cone"></i><span data-i18n="lgCone">Para onde está olhando</span></li>
+            <li><i class="lg-hp"></i><span data-i18n="lgHp">Vida</span></li>
+            <li><i class="lg-x"></i><span data-i18n="lgDeath">Morte nesta rodada</span></li>
+            <li><i class="lg-c4"></i><span data-i18n="lgC4">Bomba (C4)</span></li>
+            <li><i class="lg-nade he"></i><span data-i18n="lgHe">Granada HE</span></li>
+            <li><i class="lg-nade fl"></i><span data-i18n="lgFlash">Flashbang</span></li>
+            <li><i class="lg-nade sm"></i><span data-i18n="lgSmokeNade">Granada de fumaça</span></li>
+            <li><i class="lg-smoke"></i><span data-i18n="lgSmoke">Fumaça</span></li>
+          </ul>
+        </details>
+
+        <!-- in-game kill feed (hud_deathnotice) -->
+        <div class="kill-hud" id="killHud" aria-live="polite"></div>
+
+        <div class="dropzone" id="dropzone">
+          <div class="dz-inner">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M4 16v3h16v-3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <h2 data-i18n-html="dropTitle">Arraste uma demo <code>.dem</code> aqui</h2>
+            <p data-i18n-html="dropText"></p>
+            <div class="demo-list" id="demoList" hidden>
+              <div class="dl-title" data-i18n="demosFolder">Demos na pasta demos/</div>
+              <ul id="demoListItems"></ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- who is on camera: compact, top-left -->
+        <div class="spec-bar" id="specBar" hidden></div>
+        <div class="toast" id="toast" hidden role="status"></div>
+        <details class="diag" id="diag" hidden>
+          <summary id="diagSummary"></summary>
+          <ul id="diagList"></ul>
+        </details>
+
+        <div class="crosshair" id="crosshair" hidden aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <!-- player HUD with the game graphics (first person) -->
+        <div class="player-hud" id="playerHud" hidden></div>
+
+        <div class="game-prompt" id="gamePrompt" hidden>
+          <div class="gp-inner">
+            <h2 data-i18n="gpTitle">Visão 3D</h2>
+            <p data-i18n="gpText"></p>
+            <p data-i18n-html="gpFixed"></p>
+            <p data-i18n-html="gpQuick"></p>
+            <label class="btn btn-primary">
+              <span data-i18n="gpButton">Escolher pasta do jogo</span>
+              <input type="file" id="gameDirInput" webkitdirectory directory multiple hidden>
+            </label>
+            <p class="gp-note" data-i18n="gpNote"></p>
+            <p class="gp-status" id="gameStatus"></p>
+          </div>
+        </div>
+
+        <div class="help-modal" id="helpModal" hidden role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+          <div class="help-box">
+            <div class="help-head"><h2 id="helpTitle" data-i18n="helpTitle">Atalhos do teclado</h2><button class="tool" id="helpClose" aria-label="Fechar">✕</button></div>
+            <div class="help-cols" id="helpList"></div>
+          </div>
+        </div>
+
+        <div class="loading" id="loading" hidden>
+          <div class="spinner"></div>
+          <div id="loadingText"></div>
+        </div>
+      </section>
+      </div>
+
+      <aside class="sidebar" id="sidebar">
+        <div class="side-tabs" role="tablist">
+          <button role="tab" data-tab="score" aria-selected="true" data-i18n="tabScore">Placar</button>
+          <button role="tab" data-tab="rounds" aria-selected="false" data-i18n="tabRounds">Rodadas</button>
+          <button role="tab" data-tab="stats" aria-selected="false" data-i18n="tabStats">Estatísticas</button>
+        </div>
+        <div class="side-panel" data-panel="score">
+          <div class="team-block t" id="teamT"></div>
+          <div class="team-block ct" id="teamCT"></div>
+          <div class="feed">
+            <h3 data-i18n="killsTitle">Abates da rodada</h3>
+            <ol id="killFeed"><li class="empty">—</li></ol>
+          </div>
+        </div>
+        <!-- history of every round -->
+        <div class="side-panel" data-panel="rounds" hidden>
+          <ol class="round-list" id="roundList"></ol>
+        </div>
+        <!-- per-player stats -->
+        <div class="side-panel" data-panel="stats" hidden>
+          <div id="statsTable"></div>
+          <p class="stats-note" data-i18n="statsNote"></p>
+        </div>
+      </aside>
+    </main>
+
+    <footer class="controls">
+      <div class="timeline" id="timeline">
+        <div class="tl-track" id="tlTrack"></div>
+        <div class="tl-ticks" id="tlTicks"></div>
+        <div class="tl-labels" id="tlLabels"></div>
+        <div class="tl-progress" id="tlProgress"></div>
+        <div class="tl-head" id="tlHead"></div>
+        <div class="tl-tip" id="tlTip" hidden></div>
+      </div>
+      <div class="bar">
+        <div class="btns">
+          <button class="ctl" id="btnPrevRound" data-i18n-title="tipPrevRound" disabled>
+            <svg viewBox="0 0 24 24"><path d="M5 5h3v14H5zM20 5l-11 7 11 7z" fill="currentColor"/></svg>
+          </button>
+          <button class="ctl" id="btnBack" data-i18n-title="tipBack" disabled>
+            <svg viewBox="0 0 24 24"><path d="M11 6l-8 6 8 6zM21 6l-8 6 8 6z" fill="currentColor"/></svg>
+          </button>
+          <button class="ctl ctl-main" id="btnPlay" data-i18n-title="tipPlay" disabled>
+            <svg viewBox="0 0 24 24" class="ic-play"><path d="M7 4l13 8-13 8z" fill="currentColor"/></svg>
+            <svg viewBox="0 0 24 24" class="ic-pause"><path d="M6 4h4v16H6zM14 4h4v16h-4z" fill="currentColor"/></svg>
+          </button>
+          <button class="ctl" id="btnFwd" data-i18n-title="tipFwd" disabled>
+            <svg viewBox="0 0 24 24"><path d="M3 6l8 6-8 6zM13 6l8 6-8 6z" fill="currentColor"/></svg>
+          </button>
+          <button class="ctl" id="btnNextRound" data-i18n-title="tipNextRound" disabled>
+            <svg viewBox="0 0 24 24"><path d="M16 5h3v14h-3zM4 5l11 7-11 7z" fill="currentColor"/></svg>
+          </button>
+          <button class="ctl" id="btnStop" data-i18n-title="tipStop" disabled>
+            <svg viewBox="0 0 24 24"><path d="M6 6h12v12H6z" fill="currentColor"/></svg>
+          </button>
+        </div>
+        <div class="time" id="timeLabel">0:00 / 0:00</div>
+        <div class="round-label" id="roundLabel"></div>
+
+        <div class="sound">
+          <button class="ctl" id="btnSound" data-i18n-title="tipSound" aria-pressed="true">
+            <svg viewBox="0 0 24 24" class="ic-on"><path d="M4 9h4l5-4v14l-5-4H4zM16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg viewBox="0 0 24 24" class="ic-off"><path d="M4 9h4l5-4v14l-5-4H4zM17 9l5 6M22 9l-5 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <input type="range" id="volume" min="0" max="1" step="0.05" value="0.8" data-i18n-aria="volume">
+        </div>
+        <label class="speed">
+          <span data-i18n="speed">Velocidade</span>
+          <select id="speed" disabled>
+            <option value="0.25">0.25x</option>
+            <option value="0.5">0.5x</option>
+            <option value="1" selected>1x</option>
+            <option value="2">2x</option>
+            <option value="4">4x</option>
+            <option value="8">8x</option>
+            <option value="16">16x</option>
+          </select>
+        </label>
+        <div class="view-btns">
+          <button class="ctl" id="btnPanel" data-i18n-title="tipPanel" aria-pressed="true">
+            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 4v16" stroke="currentColor" stroke-width="2"/></svg>
+          </button>
+          <button class="ctl" id="btnFullscreen" data-i18n-title="tipFullscreen">
+            <svg viewBox="0 0 24 24" class="ic-fs"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg viewBox="0 0 24 24" class="ic-exit"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="vendor/three.min.js?v=52"></script>
+  <script src="src/ui/i18n.js?v=52"></script>
+  <script src="src/demo/readers.js?v=52"></script>
+  <script src="src/demo/delta.js?v=52"></script>
+  <script src="src/demo/net-messages.js?v=52"></script>
+  <script src="src/demo/match.js?v=52"></script>
+  <script src="src/game/wad.js?v=52"></script>
+  <script src="src/game/bsp.js?v=52"></script>
+  <script src="src/game/mdl.js?v=52"></script>
+  <script src="src/game/game-files.js?v=52"></script>
+  <script src="src/game/spr.js?v=52"></script>
+  <script src="src/game/hud-icons.js?v=52"></script>
+  <script src="src/ui/radar.js?v=52"></script>
+  <script src="src/ui/view3d.js?v=52"></script>
+  <script src="src/ui/audio.js?v=52"></script>
+  <script src="src/ui/app.js?v=52"></script>
+</body>
+</html>
