@@ -155,3 +155,7 @@ All code (names, comments, scripts) is in English. Interface strings live in `sr
 ## Legal
 
 Counter-Strike, Half-Life and their assets are property of Valve Corporation. This project does not include or distribute any game files; you must own the game to use the 3D view and sound.
+
+## License
+
+[MIT](LICENSE). Bundled [three.js](https://threejs.org/) (`vendor/three.min.js`) is also MIT-licensed.
